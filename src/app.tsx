@@ -32,7 +32,11 @@ function intent(DOM: DOMSource): Stream<Reducer> {
         .events('click')
         .mapTo<Reducer>(state => ({ ...state, count: state.count - 1 }));
 
-    return xs.merge(init$, add$, subtract$);
+    const reset$: Stream<Reducer> = DOM.select('.reset')
+        .events('click')
+        .mapTo<Reducer>(state => ({ ...state, count: state.count - state.count}));
+
+    return xs.merge(init$, add$, subtract$, reset$);
 }
 
 function view(state$: Stream<AppState>): Stream<VNode> {
@@ -47,6 +51,9 @@ function view(state$: Stream<AppState>): Stream<VNode> {
             </button>
             <button type="button" className="subtract">
                 Decrease
+            </button>
+            <button type="button" className="reset">
+                Reset
             </button>
         </div>
     );
